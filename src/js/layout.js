@@ -1,40 +1,27 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ScrollToTop from "./component/scrollToTop";
 
-import { Home } from "./views/home";
-import { Demo } from "./views/demo";
-import { Single } from "./views/single";
-import { Contact } from "./views/contact";
-import { AddContact } from "./views/addContact";
-import { EditContact } from "./views/editContact";
+// import ScrollToTop from "./component/scrollToTop";
+
 import injectContext from "./store/appContext";
 
-import { Navbar } from "./component/navbar";
-import { Footer } from "./component/footer";
+import { Contacts } from "./views/contacts.js";
+import { AddContact } from "./views/addContact.js";
 
-//create your first component
-const Layout = () => {
-	//the basename is used when your project is published in a subdirectory and not in the root of the domain
-	// you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
-	const basename = process.env.BASENAME || "";
-
+export const Layout = () => {
 	return (
 		<div>
-			<BrowserRouter basename={basename}>
-				<ScrollToTop>
-					<Navbar />
+			<BrowserRouter>
+				<div>
 					<Routes>
-						<Route path="/" element={<Home />} />
-						<Route path="/demo" element={<Demo />} />
-						<Route path="/single/:theid" element={<Single />} />
-						<Route path="/contact" element={<Contact />} />
-						<Route path="/addContact" element={<AddContact />} />
-						<Route path="/editContact/:index" element={<EditContact />} />
-						<Route path="*" element={<h1>Not found!</h1>} />
+						<Route exact path="/index.html" component={Contacts} />
+						<Route exact path="/" component={Contacts} />
+						<Route exact path="/contacts" component={Contacts} />
+						<Route exact path="/add" component={AddContact} />
+						<Route exact path="/edit" component={AddContact} />
+						<Route render={() => <h1 className="notfound">Not found!</h1>} />
 					</Routes>
-					<Footer />
-				</ScrollToTop>
+				</div>
 			</BrowserRouter>
 		</div>
 	);

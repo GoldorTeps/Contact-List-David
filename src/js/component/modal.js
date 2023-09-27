@@ -1,35 +1,46 @@
-import React, { useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import PropTypes from "prop-types";
 
 export const Modal = props => {
-	const { actions } = useContext(Context);
+	const [state, setState] = useState({
+		//initialize state here
+	});
+
+	const { store, actions } = useContext(Context);
 
 	return (
-		<div className="modal" tab="-1" role="dialog" aria-label="Confirmation dialog" style={{ display: props.show ? "inline-block" : "none" }}>
+		<div className="modal" tabIndex="-1" role="dialog" style={{ display: props.show ? "inline-block" : "none" }}>
 			<div className="modal-dialog" role="document">
-				<div className="modal-content bg-secondary">
+				<div className="modal-content">
 					<div className="modal-header">
-						<h5 className="modal-title">Are you sure you want to delete this?</h5>
+						<h5 className="modal-title">Are you sure?</h5>
+						{props.onClose ? (
+							<button
+								onClick={() => props.onClose()}
+								type="button"
+								className="close"
+								data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						) : (
+							""
+						)}
+					</div>
+					<div className="modal-body">
+						<p>Warning: unknown consequences after this point... Kidding!</p>
 					</div>
 					<div className="modal-footer">
-						<button
-							type="button"
-							className="btn btn-primary"
-							onClick={() => {
-								props.onClose();
-							}}>
-							no
+						<button type="button" className="btn btn-primary">
+							Oh no!
 						</button>
 						<button
 							type="button"
-							className="btn btn-dark"
+							className="btn btn-secondary"
 							data-dismiss="modal"
-							onClick={() => {
-								actions.delete(props.index);
-								props.onClose();
-							}}>
-							Yes!
+							onClick={() => actions.eliminarContacto(props.id)}>
+							Do it!
 						</button>
 					</div>
 				</div>
@@ -37,8 +48,24 @@ export const Modal = props => {
 		</div>
 	);
 };
-
+/**
+ * Define the data-types for
+ * your component's properties
+ **/
 Modal.propTypes = {
+	history: PropTypes.object,
 	onClose: PropTypes.func,
-	show: PropTypes.bool
+	show: PropTypes.bool,
+	id: PropTypes.string
 };
+
+/**
+ * Define the default values for
+ * your component's properties
+ **/
+Modal.defaultProps = {
+	show: false,
+	onClose: null
+};
+
+export default Modal;

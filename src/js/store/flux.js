@@ -1,108 +1,59 @@
-const getState = ({ getStore, getActions, setStore }) => {
+const getState = ({ getStore, setStore }) => {
 	return {
 		store: {
-			agenda: [],
-			currentAgendaSlug: "Goldor",
-			contactList: "",
-			contactSelected: {},
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			contacts: [],
+			user: null
 		},
 		actions: {
-			// Get contact function
-			getContacts: async () => {
+			obtenerInfo: async function() {
 				try {
-					const { currentAgendaSlug } = getStore();
-					const response = await fetch(`https://assets.breatheco.de/apis/fake/contact/agenda/${currentAgendaSlug}`);
-					const data = await response.json();
-					setStore({ agenda: data });
+					let response = await fetch("https://playground.4geeks.com/apis/fake/contact/agenda/Goldor");
+					let data = await response.json();
+					// console.log(data);
+
+					setStore({ contacts: data });
 				} catch (error) {
-					console.error("Error getting contacts:", error);
+					console.log(error);
 				}
 			},
 
-			// Add contact function
-			addContact: async (newContact) => {
+			agregarContacto: async function(nombre, direccion, telefono, email) {
 				try {
-					const response = await fetch("https://assets.breatheco.de/apis/fake/contact/", {
+					let contacto = {
+						full_name: nombre,
+						address: direccion,
+						phone: telefono,
+						email: email,
+						agenda_slug: "Goldor"
+					};
+
+					let response = await fetch("https://playground.4geeks.com/apis/fake/contact/", {
 						method: "POST",
-						body: JSON.stringify(newContact),
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(contacto)
+					});
+
+					let data = await response.json();
+					console.log(data);
+				} catch (error) {
+					console.log(error);
+				}
+			},
+			eliminarContacto: async function(id) {
+				try {
+					let response = await fetch("https://playground.4geeks.com/apis/fake/contact/" + id, {
+						method: "DELETE",
 						headers: {
 							"Content-Type": "application/json"
 						}
 					});
-					const data = await response.json();
-					const store = getStore();
-					setStore({ agenda: [...store.agenda, data] });
-					console.log("Contact has been added:", data);
+					let data = await response.json();
+					this.obtenerInfo();
 				} catch (error) {
-					console.error("Error adding contact:", error);
+					console.log(error);
 				}
-			},
-
-			// update contact function
-			updateContact: async (id, updatedContact) => {
-				try {
-					const response = await fetch(`https://assets.breatheco.de/apis/fake/contact/${id}`, {
-						method: "PUT",
-						body: JSON.stringify(updatedContact),
-						headers: {
-							"Content-Type": "application/json"
-						}
-					});
-					const data = await response.json();
-					const store = getStore();
-					const updatedAgenda = store.agenda.map(contact => {
-						if (contact.id === id) {
-							return { ...contact, ...updatedContact };
-						}
-						return contact;
-					});
-					setStore({ agenda: updatedAgenda });
-					console.log("Contact has been updated:", data);
-				} catch (error) {
-					console.error("Error updating contact:", error);
-				}
-			},
-
-			// Delete contact function
-			deleteContact: async (id) => {
-				try {
-					const response = await fetch(`https://assets.breatheco.de/apis/fake/contact/${id}`, {
-						method: "DELETE"
-					});
-					const data = await response.json();
-					const store = getStore();
-					const updatedAgenda = store.agenda.filter((contact) => contact.id !== id);
-					setStore({ agenda: updatedAgenda });
-					console.log("Contact has been deleted:", data);
-				} catch (error) {
-					console.error("Error deleting contact:", error);
-				}
-			},
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			loadSomeData: () => {
-				// fetch().then().then(data => setStore({ "foo": data.bar }))
-			},
-			changeColor: (index, color) => {
-				const store = getStore();
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-				setStore({ demo: demo });
 			}
 		}
 	};
