@@ -1,62 +1,52 @@
-const getState = ({ getStore, setStore }) => {
-	return {
-		store: {
-			contacts: [],
-			user: null
-		},
-		actions: {
-			obtenerInfo: async function() {
-				try {
-					let response = await fetch("https://playground.4geeks.com/apis/fake/contact/agenda/Goldor");
-					let data = await response.json();
-					// console.log(data);
-
-					setStore({ contacts: data });
-				} catch (error) {
-					console.log(error);
-				}
-			},
-
-			agregarContacto: async function(nombre, direccion, telefono, email) {
-				try {
-					let contacto = {
-						full_name: nombre,
-						address: direccion,
-						phone: telefono,
-						email: email,
-						agenda_slug: "Goldor"
-					};
-
-					let response = await fetch("https://playground.4geeks.com/apis/fake/contact/", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json"
-						},
-						body: JSON.stringify(contacto)
-					});
-
-					let data = await response.json();
-					console.log(data);
-				} catch (error) {
-					console.log(error);
-				}
-			},
-			eliminarContacto: async function(id) {
-				try {
-					let response = await fetch("https://playground.4geeks.com/apis/fake/contact/" + id, {
-						method: "DELETE",
-						headers: {
-							"Content-Type": "application/json"
-						}
-					});
-					let data = await response.json();
-					this.obtenerInfo();
-				} catch (error) {
-					console.log(error);
-				}
-			}
-		}
-	};
-};
+const getState = ({setStore,getStore, getActions}) => {
+    return {
+        store: {
+            contact: {
+                full_name:"",
+                email:"",
+                agenda_slug: "Goldor",
+                address:"",
+                phone:"",
+            },
+            listOfContacts: []
+        },
+        actions: {
+            getContacts: ()=>{
+                fetch("https://assets.breatheco.de/apis/fake/contact/agenda/Goldor",{
+                    method: "GET",
+                    headers:{"Content-Type":"application/json"}
+                }).then((response)=> response.json()).then((data)=>setStore({listOfContacts: data})).catch((error)=>console.log(error))
+            },
+            handleChange: (event)=>{
+                const store = getStore();
+                setStore({contact: {...store.contact, [event.target.name]: event.target.value} }) 
+                console.log(store.contact)
+            },
+            handleSubmit: (event)=>{
+                event.preventDefault();
+                const store = getStore();
+                if(store.contact){fetch("https://assets.breatheco.de/apis/fake/contact/",{
+                    method: "POST",
+                    headers:{"Content-Type":"application/json"},
+                    body: JSON.stringify(store.contact)
+                }).then((response)=>response.json()).then((data)=>console.log(data)).catch((error)=>console.log(error))}
+                setStore({
+                    contact: {
+                        full_name:"",
+                        email:"",
+                        agenda_slug: "Goldor",
+                        address:"",
+                        phone:"",
+                            }
+                })
+            },
+            deleteContact: (id)=>{
+                fetch("https://assets.breatheco.de/apis/fake/contact/"+id,{
+                    method: "DELETE",
+                }).then((response)=> response.json()).then((data)=>console.log(data)).catch((error)=>console.log(error))
+            }
+        }
+    }
+}
 
 export default getState;
