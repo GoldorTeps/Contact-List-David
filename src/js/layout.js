@@ -1,32 +1,40 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { ContextProvider } from "./store/appContext";
 
-// import ScrollToTop from "./component/scrollToTop";
-
+import { Home } from "./views/home.js";
+import { Demo } from "./views/demo";
+import { Single } from "./views/single";
+import { NewForm } from "./views/NewContact";
+import { EditForm } from "./views/EditContacts";
 import injectContext from "./store/appContext";
 
-import NewContact from "./views/NewContact.js"; 
-import EditContact  from "./views/EditContacts.js";
-import Home from "./views/home.js"; 
+import { Navbar } from "./component/navbar";
+import { Footer } from "./component/footer";
 
+//create your first component
 const Layout = () => {
+	//the basename is used when your project is published in a subdirectory and not in the root of the domain
+	// you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
+	const basename = process.env.BASENAME || "";
+
 	return (
 		<div>
-			<BrowserRouter>
-				<div>
-					<ContextProvider>
-						<Routes>
-							<Route exact path="/" element={<Home />} />
-							<Route exact path="/new" element={<NewContact />} />
-							<Route exact path="/edit" element={<EditContact />} />
-							<Route render={() => <h1 className="notfound">Not found!</h1>} />
-						</Routes>
-					</ContextProvider>	
-				</div>
+			<BrowserRouter basename={basename}>
+			
+					<Navbar />
+					<Routes>
+						<Route path="/" element={<Home />} />
+						<Route path="/demo" element={<Demo />} />
+						<Route path="/single/:theid" element={<Single />} />
+						<Route path="*" element={<h1>Not found!</h1>} />
+						<Route path="/form" element={<NewForm />}/>
+						<Route path="/edit/:id" element={<EditForm />}/>
+					</Routes>
+					<Footer />
+			
 			</BrowserRouter>
 		</div>
 	);
 };
 
-export default Layout;
+export default injectContext(Layout);

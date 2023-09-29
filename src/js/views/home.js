@@ -1,23 +1,42 @@
-import ContactCard from "../component/contactCard.js"
-import { Link } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
-import DeleteContact from "../component/deleteContact.js";
+import "../../styles/home.css";
+import { Link } from "react-router-dom";
 
-function Home(props){
+
+export function Home() {
     const { store, actions } = useContext(Context);
-    const [IDContact, setIDContact] = useState("");
-    useEffect(()=>{actions.getContacts()},[])
-    return(
-        <div className="container mb-2">
-            <div className="d-grid d-flex justify-content-end">
-                <Link to="/new"><button className="btn btn-success my-2">Add new contact</button></Link>
+  
+    const deleteClick = (e, contact) => {
+      e.preventDefault();
+      actions.deleteContact(contact.id);
+      alert(`${contact.full_name} has been deleted from your agenda`);
+    };
+    
+    useEffect(() => {
+      actions.getContacts();
+    }, []);
+  
+    return (
+      <div className="d-flex flex-column">
+        {store.listOfContacts.map((contact, id) => (
+          <div className="d-flex justify-content-between" id="mainContainer" key={id}>
+            <div className="container col-3" id='imgContainer'>
+              <img src="https://reqres.in/img/faces/1-image.jpg" className="img-thumbnail" alt="..."/>
             </div>
-            {store.listOfContacts.map((contact,index)=>{
-                return <ContactCard key={index} setID={setIDContact} id={contact.id} name={contact.full_name} address={contact.address} phone={contact.phone} email={contact.email} img="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"/>})}
-            <DeleteContact idToDelete={IDContact}/>
-        </div>
-    )
-}
-
-export default Home;
+            <div className="d-flex flex-column align-items-start col-6" id='infoContainer'>
+              <h4>{contact.full_name}</h4>
+              <p>{contact.address}</p>
+              <p>{contact.email}</p>
+              <p>{contact.phone}</p>
+            </div>
+            <div className="container col-3" id='buttonsContainer'>
+              <button onClick={(e) => { deleteClick(e, contact) }} className="btn btn-primary"><i className="bi bi-trash3-fill"></i>Delete</button>
+              <Link to={`/edit/${contact.id}`}><button className="btn btn-primary"><i className="bi bi-trash3-fill"></i>Edit</button></Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  

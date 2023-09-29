@@ -1,36 +1,60 @@
-import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect, useState} from "react";
+import React from "react";
 import { Context } from "../store/appContext";
+import { Link, useParams } from "react-router-dom";
 
-function NewContact(){
-    const { store, actions } = useContext(Context);
-    return(
-        <div className="container p-3">
-            <h2 className="text-center">Add a new contact</h2>
-            <form className="row g-3" onSubmit={actions.handleSubmit}>
-                <div className="col-md-12">
-                    <label htmlFor="inputName" className="form-label">Full Name</label>
-                    <input type="text" className="form-control" id="inputName" placeholder="Full name" name="full_name" onChange={actions.handleChange} value={store.contact.full_name}/>
+export function NewForm(){
+    const [name, setName] = useState()
+    const [email, setEmail] = useState()
+    const [phone, setPhone] = useState()
+    const [address, setAddress] = useState()
+    const {store, actions} = useContext(Context)
+
+
+    const handleClick = (e)=>{
+        e.preventDefault()
+        const contact = {
+            "full_name": name,
+            "email": email,
+            "agenda_slug": 'Goldor',
+            "address": address,
+            "phone": phone
+        }
+
+        actions.addContact(contact)
+        alert('Your contact has been added')
+        document.getElementById('inputName').value = ''
+        document.getElementById('InputEmail').value = ''
+        document.getElementById('inputPhone').value = ''
+        document.getElementById('inputAddress').value = ''
+
+        
+    }
+
+    return (
+        <div className="container-fluid">
+            <form>
+                <div className="mb-3">
+                    <label for="inputName" class="form-label">Full Name</label>
+                    <input onChange = {(e)=>{setName(e.target.value)}}type="text" className="form-control" id="inputName" aria-describedby="emailHelp"/>
                 </div>
-                <div className="col-md-12">
-                    <label htmlFor="inputEmail" className="form-label">Email</label>
-                    <input type="email" className="form-control" id="inputEmail" placeholder="Enter email" name="email" onChange={actions.handleChange} value={store.contact.email}/>
+                <div className="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Email</label>
+                    <input onChange = {(e)=>{setEmail(e.target.value)}} type="email" className="form-control" id="InputEmail" aria-describedby="emailHelp"/>
                 </div>
-                <div className="col-12">
-                    <label htmlFor="inputPhone" className="form-label">Phone</label>
-                    <input type="number" className="form-control" id="inputPhone" placeholder="Enter phone" name="phone" onChange={actions.handleChange} value={store.contact.phone}/>
+                <div className="mb-3">
+                    <label for="inputPhone" class="form-label">Phone</label>
+                    <input onChange = {(e)=>{setPhone(e.target.value)}} type="text" className="form-control" id="inputPhone"/>
                 </div>
-                <div className="col-12">
-                    <label htmlFor="inputAddress" className="form-label">Address</label>
-                    <input type="text" className="form-control" id="inputAddress" placeholder="Enter address" name="address" onChange={actions.handleChange} value={store.contact.address}/>
+                <div className="mb-3">
+                    <label for="inputAddress" class="form-label">Address</label>
+                    <input onChange={(e)=>{setAddress(e.target.value)}} type="text" className="form-control" id="inputAddress"/>
                 </div>
-                <div className="col-12">
-                    <button type="submit" className="btn btn-primary">Save</button>
-                    <Link className="m-2" to="/">or get back to contacts</Link>
+                <div className="container-fluid">
+                     <button onClick = {(e)=>{handleClick(e)}} type="submit" className="btn btn-primary">Save</button>
+                     <Link to='/'>Go back to your contacts</Link>
                 </div>
-            </form>
+           </form>
         </div>
     )
 }
-
-export default NewContact;

@@ -1,36 +1,52 @@
-import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+import React from "react";
 import { Context } from "../store/appContext";
+import { Link, useParams } from "react-router-dom";
 
-function EditContact(){
-    const { store, actions } = useContext(Context);
-    return(
-        <div className="container p-3">
-            <h2 className="text-center">Edit contact information</h2>
-            <form className="row g-3" onSubmit={actions.handleSubmit}>
-                <div className="col-md-12">
-                    <label htmlFor="inputName" className="form-label">Full Name</label>
-                    <input type="text" className="form-control" id="inputName" placeholder="Full name" name="full_name" onChange={actions.handleChange} value={store.contact.full_name}/>
+export function EditForm(){
+    
+    const {store, actions} = useContext(Context)
+    const params = useParams()
+    useEffect(()=>{actions.getContact(params.id)},[])    
+
+    const handleClick = (e)=>{
+        e.preventDefault()
+        const contact = {
+            "full_name": document.getElementById('inputName').value,
+            "email": document.getElementById('InputEmail').value,
+            "agenda_slug": 'Goldor',
+            "address": document.getElementById('inputAddress').value,
+            "phone": document.getElementById('inputPhone').value
+        }
+        console.log(contact)
+        actions.updateContact(contact, params.id)
+        alert('Your contact has been updated')     
+    }
+    
+    return (
+        <div className="container-fluid">
+            <form>
+                <div className="mb-3">
+                    <label for="inputName" className="form-label">Full Name</label>
+                    <input type="text" className="form-control" id="inputName" aria-describedby="emailHelp"/>
                 </div>
-                <div className="col-md-12">
-                    <label htmlFor="inputEmail" className="form-label">Email</label>
-                    <input type="email" className="form-control" id="inputEmail" placeholder="Enter email" name="email" onChange={actions.handleChange} value={store.contact.email}/>
+                <div className="mb-3">
+                    <label for="InputEmail" className="form-label">Email</label>
+                    <input type="email" className="form-control" id="InputEmail" aria-describedby="emailHelp"/>
                 </div>
-                <div className="col-12">
-                    <label htmlFor="inputPhone" className="form-label">Phone</label>
-                    <input type="number" className="form-control" id="inputPhone" placeholder="Enter phone" name="phone" onChange={actions.handleChange} value={store.contact.phone}/>
+                <div className="mb-3">
+                    <label for="inputPhone" className="form-label">Phone</label>
+                    <input type="text" className="form-control" id="inputPhone" />
                 </div>
-                <div className="col-12">
-                    <label htmlFor="inputAddress" className="form-label">Address</label>
-                    <input type="text" className="form-control" id="inputAddress" placeholder="Enter address" name="address" onChange={actions.handleChange} value={store.contact.address}/>
+                <div className="mb-3">
+                    <label for="inputAddress" className="form-label">Address</label>
+                    <input type="text" className="form-control" id="inputAddress"/>
                 </div>
-                <div className="col-12">
-                    <button type="submit" className="btn btn-primary">Save</button>
-                    <Link className="m-2" to="/">or get back to contacts</Link>
+                <div className="container-fluid">
+                     <button onClick = {(e)=>{handleClick(e)}} type="submit" className="btn btn-primary">Save</button>
+                     <Link to='/'>Go back to your contacts</Link>
                 </div>
-            </form>
+           </form>
         </div>
     )
 }
-
-export default EditContact;
